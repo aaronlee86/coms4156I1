@@ -1,14 +1,32 @@
-# import db
+import db
 
 
 class Gameboard():
     def __init__(self):
         self.player1 = ""
         self.player2 = ""
-        self.board = [[0 for x in range(7)] for y in range(6)]
+        self.board = [["0" for x in range(7)] for y in range(6)]
         self.game_result = ""
         self.current_turn = 'p1'
         self.remaining_moves = 42
+
+    def setStatus(self, status):
+        self.current_turn = status[0]
+        outer = status[1].split(";")
+        self.board = []
+        for o in outer:
+            self.board.append(o.split(","))
+        self.game_result = status[2]
+        self.player1 = status[3]
+        self.player2 = status[4]
+        self.remaining_moves = status[5]
+
+    def getStatus(self):
+        arr = []
+        for r in self.board:
+            arr.append(",".join(r))
+        return (self.current_turn, ";".join(arr), self.game_result,
+                self.player1, self.player2, self.remaining_moves)
 
     def setPlayer1(self, color):
         if color != "red" and color != "yellow":
@@ -35,7 +53,7 @@ class Gameboard():
             return False, "It's not your turn"
 
         row = 5
-        while self.board[row][col] != 0 and row >= 0:
+        while self.board[row][col] != "0" and row >= 0:
             row -= 1
 
         if row == -1:
@@ -62,6 +80,7 @@ class Gameboard():
             if self.remaining_moves == 0:
                 self.game_result = 'draw'
 
+        db.add_move(self.getStatus())
         return True, ""
 
     def checkWinning(self, r, c):

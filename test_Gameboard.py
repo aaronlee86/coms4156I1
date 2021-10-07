@@ -295,3 +295,39 @@ class Test_TestGameboard(unittest.TestCase):
         self.board.makemove(5, 'p2')
 
         self.assertEqual(self.board.game_result, "player2")
+
+    def test_get_status(self):
+        # test getStatus method
+        self.board.setPlayer1("yellow")
+        self.board.setPlayer2()
+        self.board.makemove(2, 'p1')
+        self.board.makemove(3, 'p2')
+
+        status = self.board.getStatus()
+        self.assertEqual(status[0], "p1")
+        self.assertEqual(status[1], "0,0,0,0,0,0,0;"
+                                    "0,0,0,0,0,0,0;"
+                                    "0,0,0,0,0,0,0;"
+                                    "0,0,0,0,0,0,0;"
+                                    "0,0,0,0,0,0,0;"
+                                    "0,0,yellow,red,0,0,0")
+        self.assertEqual(status[2], "")
+        self.assertEqual(status[3], "yellow")
+        self.assertEqual(status[4], "red")
+        self.assertEqual(status[5], 40)
+
+    def test_set_status(self):
+        # test setStatus method
+        self.board.setStatus(("p1", "0,0,0,0,0,0,0;"
+                                    "0,0,0,0,0,0,0;"
+                                    "0,0,0,0,0,0,0;"
+                                    "0,0,0,0,0,0,0;"
+                                    "0,0,0,0,0,0,0;"
+                                    "0,0,yellow,red,0,0,0",
+                                    "", "yellow", "red", 40))
+
+        self.assertEqual(self.board.current_turn, "p1")
+        self.assertEqual(self.board.game_result, "")
+        self.assertEqual(self.board.player1, "yellow")
+        self.assertEqual(self.board.player2, "red")
+        self.assertEqual(self.board.remaining_moves, 40)
